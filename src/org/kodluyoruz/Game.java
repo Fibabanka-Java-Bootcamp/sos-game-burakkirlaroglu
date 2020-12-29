@@ -8,16 +8,16 @@ public class Game {
     //ATTRIBUTES - VARIABLES
 
     private char[][] table;
-    private int tryCount;
+    private int numberOfAttempts;
     private int playerScore;
     private int pcScore;
 
     //CONSTRUCTOR
 
-    public Game() {
+    public Game(int numberOfAttempts) {
         this.playerScore = 0;
         this.pcScore = 0;
-        this.tryCount = 3;
+        this.numberOfAttempts = numberOfAttempts;
     }
 
     /* METHOD THAT CREATES FIRST ROWS AND COLUMNS TO START GAME */
@@ -68,6 +68,19 @@ public class Game {
         }
     }
 
+    /* METHOD THAT CHANGES PLAYER TURN */
+
+    int turn = who();
+
+    public void playerTurnAndGame(){
+        String next = whoIsNext(turn);
+        if (turn == 2) turn-=1;
+        else if (turn == 1) turn += 1;
+        sos(next);
+        playerScoreState(turn);
+        winner();
+    }
+
 
     /* METHOD THAT CONTROLS PLAYERS GAME AREA TO ENTER THEIR CHOOSES */
 
@@ -83,10 +96,10 @@ public class Game {
             int column = sc.nextInt();
 
             if (this.table[row][column] == 'o' || this.table[row][column] == 's' || this.table[row][column] == 'O' || this.table[row][column] == 'S') {
-                this.tryCount -= 1;
-                System.out.println("YOU PICK EXIST PLACE PLEASE TRY AGAIN!!! REMAINING:" + this.tryCount);
+                numberOfAttempts -= 1;
+                System.out.println("YOU PICK EXIST PLACE PLEASE TRY AGAIN!!! REMAINING:" + numberOfAttempts);
                 printTable();
-                while (this.tryCount > 0) {
+                while (numberOfAttempts > 0) {
                     System.out.print("ROW:");
                     int satir2 = sc.nextInt();
                     System.out.print("COLUMN:");
@@ -96,9 +109,9 @@ public class Game {
                         printTable();
                         break;
                     }
-                    this.tryCount -= 1;
+                    numberOfAttempts -= 1;
                     printTable();
-                    System.out.println("REMAINING:" + this.tryCount);
+                    System.out.println("REMAINING:" + numberOfAttempts);
                 }
 
             } else {
@@ -106,7 +119,6 @@ public class Game {
 
                 printTable();
             }
-            this.tryCount = 3;
 
 
         } else if (s.equals("o")) {
@@ -154,7 +166,7 @@ public class Game {
     public boolean rowControl() {
 
         for (int i = 0; i < table.length - 2; i++) {
-            for (int j = 0; j < table.length - 2; j++) {
+            for (int j = 0; j < table.length - 1; j++) {
                 if (table[j][i] == 's' && table[j][i + 1] == 'o' && table[j][i + 2] == 's') {
                     table[j][i] = 'S';
                     table[j][i + 1] = 'O';
@@ -180,6 +192,13 @@ public class Game {
                     System.out.println("SOS DIAGONAL");
                     return true;
                 }
+                else if (table[i][j + 2] == 's' && table[i + 1][j + 1] == 'o' && table[i + 2][j] == 's') {
+                    table[i][j + 2] = 'S';
+                    table[i + 1][j + 1] = 'O';
+                    table[i + 2][j] = 'S';
+                    System.out.println("REVERSE SOS DIAGONAL");
+                    return true;
+                }
             }
         }
         return false;
@@ -190,7 +209,7 @@ public class Game {
     public boolean columnControl() {
 
         for (int i = 0; i < table.length - 2; i++) {
-            for (int j = 0; j < table.length - 2; j++) {
+            for (int j = 0; j < table.length - 1; j++) {
                 if (table[i][j] == 's' && table[i + 1][j] == 'o' && table[i + 2][j] == 's') {
                     table[i][j] = 'S';
                     table[i + 1][j] = 'O';
@@ -221,7 +240,7 @@ public class Game {
                 playerScore += 1;
                 System.out.println("PLAYER:" + playerScore + "SCORE");
             } else {
-                System.out.println("PLAEY SCORE:" + playerScore);
+                System.out.println("PLAYER SCORE:" + playerScore);
                 System.out.println("PC SCORE:" + pcScore);
             }
         }

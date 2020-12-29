@@ -6,31 +6,32 @@ public class Main {
 
     public static void main(String[] args){
 
-        Scanner sc = new Scanner(System.in);
-        System.out.println("SOS GAME");
-        Game game = new Game();
+        Game game;
+        int tableSize;
 
-        System.out.println("PLEASE SELECT TABLE SIZE");
+        try (Scanner sc = new Scanner(System.in)) {
 
-        int tableSize = sc.nextInt();
+            System.out.println("SOS GAME");
+            System.out.println("PLEASE SELECT NUMBER OF ATTEMPTS");
+            int numberOfAttempts = sc.nextInt();
+            game = new Game(numberOfAttempts);
 
-        while (tableSize < 3 || tableSize > 7) {
-            System.out.println("INVALID RANGE!! TABLE MUST TO BE BETWEEN 3 AND 7 !!");
+            System.out.println("PLEASE SELECT TABLE SIZE");
             tableSize = sc.nextInt();
-        }
 
-        game.gameTable(tableSize);
+            game.gameTable(tableSize);
 
-        int firstPlay = game.who();
+            while (tableSize < 3 || tableSize > 7) {
+                System.out.println("INVALID RANGE!! TABLE MUST TO BE BETWEEN 3 AND 7 !!");
+                tableSize = sc.nextInt();
+            }
 
-        while (!game.isGameOver()){
+            while (!game.isGameOver()){
+                game.playerTurnAndGame();
+            }
 
-            String next = game.whoIsNext(firstPlay);
-            if (firstPlay == 2) firstPlay-=1;
-            else if (firstPlay == 1) firstPlay += 1;
-            game.sos(next);
-            game.playerScoreState(firstPlay);
-            game.winner();
+        }catch (RuntimeException e){
+            System.out.println("Error: "+e);
         }
     }
 }
