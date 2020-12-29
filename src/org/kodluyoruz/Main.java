@@ -9,8 +9,7 @@ public class Main {
         Game game;
         int tableSize;
 
-        try (Scanner sc = new Scanner(System.in)) {
-
+            Scanner sc = new Scanner(System.in);
             System.out.println("SOS GAME");
             System.out.println("PLEASE SELECT NUMBER OF ATTEMPTS");
             int numberOfAttempts = sc.nextInt();
@@ -29,9 +28,5 @@ public class Main {
             while (!game.isGameOver()){
                 game.playerTurnAndGame();
             }
-
-        }catch (RuntimeException e){
-            System.out.println("Error: "+e);
-        }
     }
 }

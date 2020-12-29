@@ -9,14 +9,12 @@ public class Game {
 
     private char[][] table;
     private int numberOfAttempts;
-    private int playerScore;
-    private int pcScore;
+    private int playerScore = 0;
+    private int pcScore = 0;
 
     //CONSTRUCTOR
 
     public Game(int numberOfAttempts) {
-        this.playerScore = 0;
-        this.pcScore = 0;
         this.numberOfAttempts = numberOfAttempts;
     }
 
@@ -68,17 +66,21 @@ public class Game {
         }
     }
 
-    /* METHOD THAT CHANGES PLAYER TURN */
+    /* METHODS THAT CHANGES PLAYER TURN AND GAME */
 
     int turn = who();
 
     public void playerTurnAndGame(){
         String next = whoIsNext(turn);
-        if (turn == 2) turn-=1;
-        else if (turn == 1) turn += 1;
+        turnControl();
         sos(next);
         playerScoreState(turn);
         winner();
+    }
+
+    public void turnControl(){
+            if (turn == 2) turn-=1;
+            else if (turn == 1) turn += 1;
     }
 
 
@@ -89,62 +91,67 @@ public class Game {
         Scanner sc = new Scanner(System.in);
         Random rd = new Random();
 
-        if (s.equals("s")) {
-            System.out.print("Row:");
-            int row = sc.nextInt();
-            System.out.print("Column:");
-            int column = sc.nextInt();
+        try {
+            if (s.equals("s")) {
+                System.out.print("Row:");
+                int row = sc.nextInt();
+                System.out.print("Column:");
+                int column = sc.nextInt();
 
-            if (this.table[row][column] == 'o' || this.table[row][column] == 's' || this.table[row][column] == 'O' || this.table[row][column] == 'S') {
-                numberOfAttempts -= 1;
-                System.out.println("YOU PICK EXIST PLACE PLEASE TRY AGAIN!!! REMAINING:" + numberOfAttempts);
-                printTable();
-                while (numberOfAttempts > 0) {
-                    System.out.print("ROW:");
-                    int satir2 = sc.nextInt();
-                    System.out.print("COLUMN:");
-                    int sutun2 = sc.nextInt();
-                    if (this.table[satir2][sutun2] == '-') {
-                        this.table[satir2][sutun2] = s.charAt(0);
-                        printTable();
-                        break;
-                    }
+                if (this.table[row][column] == 'o' || this.table[row][column] == 's' || this.table[row][column] == 'O' || this.table[row][column] == 'S') {
                     numberOfAttempts -= 1;
+                    System.out.println("YOU PICK EXIST PLACE PLEASE TRY AGAIN!!! REMAINING:" + numberOfAttempts);
                     printTable();
-                    System.out.println("REMAINING:" + numberOfAttempts);
-                }
-
-            } else {
-                this.table[row][column] = s.charAt(0);
-
-                printTable();
-            }
-
-
-        } else if (s.equals("o")) {
-
-            System.out.println("COMPUTER İS PLAYING...");
-
-            int str = rd.nextInt(this.table.length);
-            int stn = rd.nextInt(this.table.length);
-
-            if (this.table[str][stn] == 'o' || this.table[str][stn] == 's' || this.table[str][stn] == 'O' || this.table[str][stn] == 'S') {
-                System.out.println("IT PICKED WRONG PLACE AND IT IS TRYING AGAIN...");
-                while (this.table[str][stn] == 'o' || this.table[str][stn] == 's' || this.table[str][stn] == 'O' || this.table[str][stn] == 'S') {
-                    int str2 = rd.nextInt(this.table.length);
-                    int stn2 = rd.nextInt(this.table.length);
-                    if (this.table[str2][stn2] == '-') {
-                        this.table[str2][stn2] = s.charAt(0);
+                    while (numberOfAttempts > 0) {
+                        System.out.print("ROW:");
+                        int satir2 = sc.nextInt();
+                        System.out.print("COLUMN:");
+                        int sutun2 = sc.nextInt();
+                        if (this.table[satir2][sutun2] == '-') {
+                            this.table[satir2][sutun2] = s.charAt(0);
+                            printTable();
+                            break;
+                        }
+                        numberOfAttempts -= 1;
                         printTable();
-                        break;
+                        System.out.println("REMAINING:" + numberOfAttempts);
                     }
+
+                } else {
+                    this.table[row][column] = s.charAt(0);
+
+                    printTable();
                 }
 
-            } else {
-                this.table[str][stn] = s.charAt(0);
-                printTable();
+
+            } else if (s.equals("o")) {
+
+                System.out.println("COMPUTER İS PLAYING...");
+
+                int str = rd.nextInt(this.table.length);
+                int stn = rd.nextInt(this.table.length);
+
+                if (this.table[str][stn] == 'o' || this.table[str][stn] == 's' || this.table[str][stn] == 'O' || this.table[str][stn] == 'S') {
+                    System.out.println("IT PICKED WRONG PLACE AND IT IS TRYING AGAIN...");
+                    while (this.table[str][stn] == 'o' || this.table[str][stn] == 's' || this.table[str][stn] == 'O' || this.table[str][stn] == 'S') {
+                        int str2 = rd.nextInt(this.table.length);
+                        int stn2 = rd.nextInt(this.table.length);
+                        if (this.table[str2][stn2] == '-') {
+                            this.table[str2][stn2] = s.charAt(0);
+                            printTable();
+                            break;
+                        }
+                    }
+                } else {
+                    this.table[str][stn] = s.charAt(0);
+                    printTable();
+                }
             }
+        }catch (ArrayIndexOutOfBoundsException e){
+            System.out.println("INVALID RANGE: ERROR:"+e);
         }
+
+
     }
 
 
@@ -165,16 +172,20 @@ public class Game {
 
     public boolean rowControl() {
 
-        for (int i = 0; i < table.length - 2; i++) {
-            for (int j = 0; j < table.length - 1; j++) {
-                if (table[j][i] == 's' && table[j][i + 1] == 'o' && table[j][i + 2] == 's') {
-                    table[j][i] = 'S';
-                    table[j][i + 1] = 'O';
-                    table[j][i + 2] = 'S';
-                    System.out.println("SOS ROW");
-                    return true;
+        try {
+            for (int i = 0; i < table.length; i++) {
+                for (int j = 0; j < table.length; j++) {
+                    if (table[j][i] == 's' && table[j][i + 1] == 'o' && table[j][i + 2] == 's') {
+                        table[j][i] = 'S';
+                        table[j][i + 1] = 'O';
+                        table[j][i + 2] = 'S';
+                        System.out.println("SOS ROW");
+                        return true;
+                    }
                 }
             }
+        }catch (ArrayIndexOutOfBoundsException e){
+            System.out.println("ERROR:"+e);
         }
         return false;
     }
@@ -183,23 +194,27 @@ public class Game {
 
     public boolean diagonalControl() {
 
-        for (int i = 0; i < table.length - 2; i++) {
-            for (int j = 0; j < table.length - 2; j++) {
-                if (table[i][j] == 's' && table[i + 1][j + 1] == 'o' && table[i + 2][j + 2] == 's') {
-                    table[i][j] = 'S';
-                    table[i + 1][j + 1] = 'O';
-                    table[i + 2][j + 2] = 'S';
-                    System.out.println("SOS DIAGONAL");
-                    return true;
-                }
-                else if (table[i][j + 2] == 's' && table[i + 1][j + 1] == 'o' && table[i + 2][j] == 's') {
-                    table[i][j + 2] = 'S';
-                    table[i + 1][j + 1] = 'O';
-                    table[i + 2][j] = 'S';
-                    System.out.println("REVERSE SOS DIAGONAL");
-                    return true;
+        try {
+            for (int i = 0; i < table.length - 2; i++) {
+                for (int j = 0; j < table.length - 2; j++) {
+                    if (table[i][j] == 's' && table[i + 1][j + 1] == 'o' && table[i + 2][j + 2] == 's') {
+                        table[i][j] = 'S';
+                        table[i + 1][j + 1] = 'O';
+                        table[i + 2][j + 2] = 'S';
+                        System.out.println("SOS DIAGONAL");
+                        return true;
+                    }
+                    else if (table[i][j + 2] == 's' && table[i + 1][j + 1] == 'o' && table[i + 2][j] == 's') {
+                        table[i][j + 2] = 'S';
+                        table[i + 1][j + 1] = 'O';
+                        table[i + 2][j] = 'S';
+                        System.out.println("REVERSE SOS DIAGONAL");
+                        return true;
+                    }
                 }
             }
+        }catch (ArrayIndexOutOfBoundsException e){
+            System.out.println("ERROR:"+e);
         }
         return false;
     }
@@ -208,17 +223,22 @@ public class Game {
 
     public boolean columnControl() {
 
-        for (int i = 0; i < table.length - 2; i++) {
-            for (int j = 0; j < table.length - 1; j++) {
-                if (table[i][j] == 's' && table[i + 1][j] == 'o' && table[i + 2][j] == 's') {
-                    table[i][j] = 'S';
-                    table[i + 1][j] = 'O';
-                    table[i + 2][j] = 'S';
-                    System.out.println("SOS COLUMN");
-                    return true;
+        try {
+            for (int i = 0; i < table.length; i++) {
+                for (int j = 0; j < table.length; j++) {
+                    if (table[i][j] == 's' && table[i + 1][j] == 'o' && table[i + 2][j] == 's') {
+                        table[i][j] = 'S';
+                        table[i + 1][j] = 'O';
+                        table[i + 2][j] = 'S';
+                        System.out.println("SOS COLUMN");
+                        return true;
+                    }
                 }
             }
+        } catch (ArrayIndexOutOfBoundsException e){
+            System.out.println("ERROR:"+e);
         }
+
         return false;
     }
 
